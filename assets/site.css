@@ -257,7 +257,7 @@ td.num, th.num { text-align: right; padding-right: 0; padding-left: 10px; font-f
 /* ------------------------------------------------------- the build, in 3D */
 /* the model stays on screen while the steps scroll past it */
 .build { display: grid; gap: 0; margin-top: 26px; }
-.viewer { position: sticky; top: var(--bar-clear); z-index: 2; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper); }
+.viewer { position: sticky; top: var(--bar-clear); z-index: 10; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper); }
 .stage { position: relative; height: 36vh; min-height: 230px; overflow: hidden; border-radius: 14px 14px 0 0; background-image: linear-gradient(90deg, var(--square) 1px, transparent 1px), linear-gradient(var(--square) 1px, transparent 1px); background-size: 32px 32px; background-position: center; }
 .stage canvas.model { cursor: grab; }
 .stage canvas.model:active { cursor: grabbing; }
@@ -329,6 +329,11 @@ footer { margin-top: 56px; padding: 24px 0 40px; position: relative; font-family
 footer::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--dash-ink); }
 footer p { margin: 0 0 6px; }
 
+.veil { position: fixed; left: 0; right: 0; z-index: 9; height: 22vh; pointer-events: none; transition: opacity 0.35s; }
+.veil-top { top: 0; background: linear-gradient(rgba(232, 229, 210, 0.7), rgba(232, 229, 210, 0.38) 45%, rgba(232, 229, 210, 0)); }
+.veil-bottom { bottom: 0; background: linear-gradient(to top, rgba(232, 229, 210, 0.7), rgba(232, 229, 210, 0.38) 45%, rgba(232, 229, 210, 0)); }
+.veil.off { opacity: 0; }
+
 /* -------------------------------------------------------------- wider screens */
 @media (min-width: 720px) {
   :root { --gutter: 32px; }
@@ -381,7 +386,7 @@ footer p { margin: 0 0 6px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
 @media print {
   body { background-image: none; }
-  .bar, .viewer, .actions, .wave, .hold, .go, .next { display: none; }
+  .bar, .viewer, .actions, .wave, .hold, .go, .next, .veil { display: none; }
   .build-steps li { min-height: 0; opacity: 1 !important; }
   section { padding-top: 20px; }
 }

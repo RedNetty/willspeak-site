@@ -1,0 +1,84 @@
+/* WillSpeak lab notebook: the styles the home page does not already have.
+   Charts are inline SVG drawn in the site's two inks; the stock model is hatched ink, my models are blue. */
+.nb-hero { padding: 34px 0 0; text-align: center; }
+.nb-hero .wrap { display: grid; justify-items: center; }
+.nb-hero h1 { font-size: clamp(40px, 9vw, 76px); }
+.nb-hero .lede { margin-top: 18px; text-align: center; justify-self: center; max-width: 30em; }
+.nb section { padding-top: 76px; }
+.nb-intro { margin-bottom: 26px; }
+.nb-intro .intro { margin-bottom: 12px; }
+.nb .chart { margin: 22px 0 8px; }
+.nb .chart + .fold.lone { margin-top: 30px; }
+.nb .fold .chart { margin-top: 4px; }
+.nb-plot { min-width: 0; }
+.nb-svg { display: block; width: 100%; max-width: 500px; height: auto; overflow: visible; }
+.nb-multi .nb-svg { max-width: none; }
+.nb-multi.c2 .nb-svg { max-width: 460px; }
+.nb .src { margin: 10px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+.nb .fold-body > p { max-width: 44em; }
+.nb-svg text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
+.nb-svg .tick { font-size: 11.5px; }
+.nb-svg .axl { font-size: 10.5px; fill: var(--muted); }
+.nb-svg .pt { font-size: 11.5px; font-weight: 700; fill: var(--ink); letter-spacing: 0.3px; }
+.nb-svg .lab { font-family: var(--sans); font-size: 13px; fill: var(--body); }
+.nb-svg .lab.strong { font-weight: 600; fill: var(--ink); }
+.nb-svg .val, .nb-svg .dl { font-size: 12px; font-weight: 700; fill: var(--ink); }
+.nb-svg .reft { font-size: 10.5px; fill: var(--ink); }
+.nb-svg .gl { stroke: var(--paper-deep); stroke-width: 1; }
+.nb-svg .ax { stroke: var(--ink); stroke-width: 1.5; }
+.nb-svg .ref { stroke: var(--ink); stroke-width: 1.5; }
+.nb-svg .span { stroke: var(--ink); stroke-width: 1; opacity: 0.35; }
+.nb-svg .ci { stroke: var(--ink); stroke-width: 1.5; }
+.nb-svg .mk { cursor: default; outline: none; }
+.nb-svg .mk:hover > *, .nb-svg .mk:focus-visible > * { stroke: var(--ink); stroke-width: 3; }
+.nb-multi { display: grid; gap: 18px 26px; grid-template-columns: minmax(0, 1fr); }
+.pt-h { margin: 14px 0 2px; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink); }
+.nb-multi .pt-h:first-child { margin-top: 0; }
+.nb-key { margin: 0 0 12px; }
+.nb-key li { gap: 6px; }
+.nb-key svg { flex: none; }
+.nb-table { overflow-x: auto; }
+.nb-table table { min-width: 100%; }
+.nb-tip { position: fixed; z-index: 30; max-width: min(22em, calc(100vw - 24px)); padding: 7px 11px; border-radius: 8px; background: var(--ink); color: var(--paper); font-size: 13.5px; line-height: 1.35; pointer-events: none; }
+.nb-tip[hidden] { display: none; }
+.nb-facts { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 14px; }
+.nb-facts li { position: relative; display: grid; grid-template-columns: 5.2em 1fr; gap: 14px; align-items: baseline; padding: 0 0 14px; }
+.nb-facts li::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--rule); }
+.nb-facts b { font-family: var(--display); font-weight: 400; font-size: 34px; line-height: 1; color: var(--accent-text); }
+.nb-facts span { font-size: 16px; }
+.nb-list { columns: 2 14em; column-gap: 28px; margin: 6px 0 18px; padding: 0; list-style: none; font-size: 15px; }
+.nb-list li { break-inside: avoid; padding: 5px 0; border-bottom: 1px solid var(--rule); }
+.nb-list b { font-weight: 500; }
+.nb-list span { display: block; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.nb-ledger, .nb-gaps { list-style: none; margin: 26px 0 0; padding: 0; position: relative; }
+.nb-ledger::before, .nb-gaps::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--rule); }
+.nb-ledger li, .nb-gaps li { position: relative; display: grid; gap: 3px; padding: 15px 0 16px; }
+.nb-ledger li::after, .nb-gaps li::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--rule); }
+.nb-ledger .idea { font-weight: 600; color: var(--ink); }
+.nb-ledger .res { font-family: var(--mono); font-size: 14px; color: var(--body); }
+.nb-ledger .verdict { font-size: 15.5px; color: var(--muted); }
+.nb-ledger a { width: fit-content; font-family: var(--mono); font-size: 13px; font-weight: 700; overflow-wrap: anywhere; }
+.nb-gaps b { font-weight: 600; }
+.nb-gaps span { color: var(--muted); font-size: 16px; }
+@media (min-width: 720px) {
+  .nb-multi.paired { grid-template-rows: auto auto; grid-auto-flow: column; }
+  .nb-multi.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .nb-multi.c2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nb-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; }
+  .nb-facts li { grid-template-columns: 1fr; gap: 6px; }
+  .nb-ledger li { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr) minmax(0, 1fr); column-gap: 26px; }
+  .nb-ledger a { grid-column: 1 / -1; }
+  .nb-gaps li { grid-template-columns: 14em 1fr; column-gap: 26px; }
+}
+@media (min-width: 940px) {
+  /* a framed chart: the plot on the left, what it shows and its numbers on the right */
+  .nb .chart:not(.wide) { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); column-gap: 44px; align-items: start; }
+  .nb .chart:not(.wide) > h3, .nb .chart:not(.wide) > .sub, .nb .chart:not(.wide) > .plot { grid-column: 1; }
+  .nb .chart:not(.wide) > .cap, .nb .chart:not(.wide) > details, .nb .chart:not(.wide) > .src { grid-column: 2; }
+  .nb .chart:not(.wide) > .cap { margin-top: 0; grid-row: 1 / span 3; }
+  .nb .fold .chart.wide { display: block; }
+  .nb .chart.wide .cap { max-width: 52em; }
+}
+@media (max-width: 420px) {
+  .nb-facts b { font-size: 28px; }
+}
