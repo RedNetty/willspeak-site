@@ -428,27 +428,27 @@
 <section id="code">
   <div class="wrap">
     <div class="sect-head"><span class="n">05</span><h2>The code</h2></div>
-    <p class="intro">The application, the training and evaluation scripts and their tests are in the repository beside this page. Recordings, model weights and run logs are left out.</p>
+    <p class="intro">The application, the training and evaluation scripts and their tests are in the WillSpeak repository on GitHub. Recordings, model weights and run logs are left out.</p>
     <div class="actions">
-      <a class="btn solid" href="https://github.com/RedNetty/willspeak/tree/main/code" rel="noopener">Browse the code on GitHub</a>
+      <a class="btn solid" href="https://github.com/RedNetty/willspeak/tree/main/app" rel="noopener">Browse the code on GitHub</a>
       <a class="btn" href="https://github.com/RedNetty/willspeak" rel="noopener">Repository</a>
     </div>
     <p class="label gap">Where to start reading</p>
     <ul class="cards">
-      <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/asr/train.py" rel="noopener"><code>scripts/asr/train.py</code><span>Fine-tunes Parakeet from the train and development splits. It never opens the test split.</span></a></li>
-      <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/asr/block_adapter.py" rel="noopener"><code>scripts/asr/block_adapter.py</code><span>The adapter: one added layer after an encoder block.</span></a></li>
-      <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/corpus/torgo_manifest.py" rel="noopener"><code>scripts/corpus/torgo_manifest.py</code><span>Scans TORGO and writes the prompt-disjoint splits.</span></a></li>
+      <li><a href="https://github.com/RedNetty/willspeak/blob/main/app/scripts/asr/train.py" rel="noopener"><code>scripts/asr/train.py</code><span>Fine-tunes Parakeet from the train and development splits. It never opens the test split.</span></a></li>
+      <li><a href="https://github.com/RedNetty/willspeak/blob/main/app/scripts/asr/block_adapter.py" rel="noopener"><code>scripts/asr/block_adapter.py</code><span>The adapter: one added layer after an encoder block.</span></a></li>
+      <li><a href="https://github.com/RedNetty/willspeak/blob/main/app/scripts/corpus/torgo_manifest.py" rel="noopener"><code>scripts/corpus/torgo_manifest.py</code><span>Scans TORGO and writes the prompt-disjoint splits.</span></a></li>
     </ul>
     <details class="fold lone">
       <summary><span class="t">Six more files</span></summary>
       <div class="fold-body">
         <ul class="cards">
-          <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/asr/lm_rescore.py" rel="noopener"><code>scripts/asr/lm_rescore.py</code><span>Chooses among a clip's candidate sentences with the language model.</span></a></li>
-          <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/asr/ci.py" rel="noopener"><code>scripts/asr/ci.py</code><span>Paired bootstrap intervals for the word error rates.</span></a></li>
-          <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/asr/export.py" rel="noopener"><code>scripts/asr/export.py</code><span>Exports a trained model to the files the Pi runs.</span></a></li>
-          <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/src/willspeak/handsfree.py" rel="noopener"><code>src/willspeak/handsfree.py</code><span>The hands-free rules: speak, stop, sleep and wake.</span></a></li>
-          <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/src/willspeak/server.py" rel="noopener"><code>src/willspeak/server.py</code><span>The server that records, transcribes and replies on the device.</span></a></li>
-          <li><a href="https://github.com/RedNetty/willspeak/tree/main/code/tests" rel="noopener"><code>tests/</code><span>Unit and integration tests for the code above.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/blob/main/app/scripts/asr/lm_report.py" rel="noopener"><code>scripts/asr/lm_report.py</code><span>Chooses among a clip's candidate sentences with the language model.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/blob/main/app/scripts/asr/ci.py" rel="noopener"><code>scripts/asr/ci.py</code><span>Paired bootstrap intervals for the word error rates.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/blob/main/app/scripts/asr/export.py" rel="noopener"><code>scripts/asr/export.py</code><span>Exports a trained model to the files the Pi runs.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/blob/main/app/src/willspeak/handsfree.py" rel="noopener"><code>src/willspeak/handsfree.py</code><span>The hands-free rules: speak, stop, sleep and wake.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/blob/main/app/src/willspeak/server.py" rel="noopener"><code>src/willspeak/server.py</code><span>The server that records, transcribes and replies on the device.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/tree/main/app/tests" rel="noopener"><code>tests/</code><span>Unit and integration tests for the code above.</span></a></li>
         </ul>
       </div>
     </details>
