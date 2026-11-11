@@ -1,0 +1,386 @@
+/* WillSpeak project site.
+   Layout: one centred column on squared paper, read top to bottom as one path. A pill of links
+   floats at the top. The device stands in the middle of the first screen with a waveform passing
+   behind it; under it the whole project is told in three steps. Each section then shows its few
+   main points and keeps the detail folded until it is asked for, and ends with a link to the next.
+   In the device section the 3D model stays put while the build steps scroll past it.
+   Two inks on cream paper: near-black and the blue of the printed lid. A lime dot marks what is live. */
+
+@font-face { font-family: "Young Serif"; font-weight: 400; font-display: swap; src: url("fonts/YoungSerif-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Lexend"; font-weight: 400; font-display: swap; src: url("fonts/Lexend-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Lexend"; font-weight: 500; font-display: swap; src: url("fonts/Lexend-Medium.woff2") format("woff2"); }
+@font-face { font-family: "Lexend"; font-weight: 600; font-display: swap; src: url("fonts/Lexend-SemiBold.woff2") format("woff2"); }
+@font-face { font-family: "Lexend"; font-weight: 700; font-display: swap; src: url("fonts/Lexend-Bold.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 400; font-display: swap; src: url("fonts/SpaceMono-Regular.woff2") format("woff2"); }
+@font-face { font-family: "Space Mono"; font-weight: 700; font-display: swap; src: url("fonts/SpaceMono-Bold.woff2") format("woff2"); }
+
+:root {
+  color-scheme: light;
+  --paper: #E8E5D2;
+  --paper-deep: #DAD6BE;     /* panels and hover: one step darker than the paper */
+  --square: #DFDCC7;         /* the squares printed on the paper, kept faint */
+  --ink: #16181D;
+  --body: #24262B;
+  --muted: #5A5848;
+  --accent: #2F5BEA;         /* marks: bars, rules, the lid */
+  --accent-text: #2247C7;    /* the same blue, a step darker, for text on paper */
+  --signal: #B9E13C;         /* the lime dot: something is live or held */
+  --grid: #C9C5AB;           /* gridlines inside a chart */
+  --display: "Young Serif", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --mono: "Space Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --sans: "Lexend", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --gutter: 20px;
+  --bar-clear: 74px;         /* room the floating bar takes at the top of the screen */
+  /* a dashed rule: 10 px of ink, 7 px of paper */
+  --dash-ink: repeating-linear-gradient(90deg, var(--ink) 0 10px, transparent 10px 17px);
+  --dash-blue: repeating-linear-gradient(90deg, var(--accent) 0 10px, transparent 10px 17px);
+  /* hatching for the baseline bar of a chart: ink lines on paper */
+  --hatch: repeating-linear-gradient(135deg, var(--ink) 0 2px, transparent 2px 6px);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; color: var(--body); font-family: var(--sans); font-size: 17px; line-height: 1.55;
+  background-color: var(--paper);
+  background-image: linear-gradient(90deg, var(--square) 1px, transparent 1px), linear-gradient(var(--square) 1px, transparent 1px);
+  background-size: 32px 32px; background-position: center top;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--accent-text); text-underline-offset: 3px; text-decoration-thickness: 2px; }
+a:hover { color: var(--ink); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+::selection { background: var(--ink); color: var(--paper); }
+.wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 var(--gutter); }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--ink); color: var(--paper); padding: 8px 12px; z-index: 20; font-family: var(--mono); }
+.skip:focus { left: 8px; }
+
+/* ------------------------------------------------------------------ top bar */
+/* one rounded pill, centred, that stays at the top of the screen */
+.bar { position: sticky; top: 10px; z-index: 10; display: flex; justify-content: center; margin-top: 10px; padding: 0 12px; pointer-events: none; }
+.pill { pointer-events: auto; display: flex; align-items: center; gap: 2px; max-width: 100%; padding: 4px; border: 2px solid var(--ink); border-radius: 999px; background: var(--paper); }
+.brand { flex: none; display: flex; align-items: center; gap: 8px; padding: 0 10px 0 9px; font-family: var(--display); font-size: 20px; line-height: 1; color: var(--ink); text-decoration: none; }
+.brand b { color: var(--accent-text); font-weight: 400; }
+.pill nav { display: flex; gap: 2px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.pill nav::-webkit-scrollbar { display: none; }
+.pill nav a, .pill .cta { flex: none; padding: 7px 11px; border-radius: 999px; font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.pill nav a:hover { background: var(--paper-deep); }
+.pill nav a[aria-current="true"] { background: var(--ink); color: var(--paper); }
+.pill .cta { margin-left: 2px; padding: 7px 14px; background: var(--accent-text); color: #FFFFFF; }
+.pill .cta:hover { background: var(--ink); color: var(--paper); }
+
+/* the seven bars of the waveform mark */
+.mark { display: inline-flex; align-items: center; gap: 0.11em; height: 1em; font-size: 24px; }
+.mark i { display: block; width: 0.13em; background: var(--ink); }
+.mark i:nth-child(1), .mark i:nth-child(7) { height: 32%; }
+.mark i:nth-child(2), .mark i:nth-child(6) { height: 56%; }
+.mark i:nth-child(3), .mark i:nth-child(5) { height: 79%; }
+.mark i:nth-child(4) { height: 100%; background: var(--accent); }
+
+/* --------------------------------------------------------------------- hero */
+.hero { padding: 30px 0 6px; overflow-x: clip; text-align: center; }
+.hero .wrap { display: grid; justify-items: center; }
+.eyebrow { margin: 0 0 14px; font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink); }
+h1 { margin: 0; max-width: 11em; font-family: var(--display); font-weight: 400; font-size: clamp(42px, 11.5vw, 92px); line-height: 1.02; letter-spacing: -0.015em; color: var(--ink); text-wrap: balance; }
+h1 b { font-weight: 400; color: var(--accent-text); }
+
+/* the device stands here; the waveform runs behind it from one edge of the screen to the other */
+.hero-stage { position: relative; width: 100%; height: clamp(250px, 40vh, 420px); margin-top: 4px; cursor: pointer; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.wave { position: absolute; top: 0; left: 50%; width: 100vw; height: 100%; transform: translateX(-50%); pointer-events: none; }
+canvas.model { position: absolute; inset: 0; width: 100%; height: 100%; display: block; outline: none; }
+.hero-stage .still { position: absolute; inset: 0; margin: auto; height: 100%; width: auto; max-width: none; transition: opacity 0.4s; pointer-events: none; }
+.hero-stage .still.gone { opacity: 0; }
+.io { position: absolute; top: 4px; font-family: var(--mono); font-size: 11px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; color: var(--muted); pointer-events: none; }
+.io.in { left: 0; }
+.io.out { right: 0; color: var(--accent-text); }
+.hold { position: absolute; left: 50%; bottom: -16px; z-index: 2; transform: translateX(-50%); display: inline-flex; align-items: center; gap: 8px; padding: 5px 13px 5px 6px; border: 2px solid var(--ink); border-radius: 999px; background: var(--paper); font-family: var(--mono); font-size: 11.5px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase; color: var(--ink); white-space: nowrap; cursor: pointer; touch-action: manipulation; }
+.hold i { width: 18px; height: 18px; border: 2px solid var(--ink); border-radius: 50%; background: transparent; transition: background 0.15s, transform 0.15s; }
+.hold[aria-pressed="true"] i { background: var(--signal); transform: scale(0.82); }
+
+.hero-foot { display: grid; gap: 18px; justify-items: center; width: 100%; margin-top: 34px; }
+.lede { margin: 0; max-width: 27em; font-size: 17px; font-weight: 500; line-height: 1.45; color: var(--ink); }
+.go { display: inline-flex; align-items: center; gap: 10px; padding: 7px 18px 7px 7px; border-radius: 999px; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+.go i { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--paper); color: var(--ink); font-style: normal; font-size: 16px; line-height: 1; }
+.go i::before { content: "↓"; }
+.go:hover { background: var(--accent-text); color: #FFFFFF; }
+.tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; margin: 0; padding: 0; list-style: none; font-size: 15px; color: var(--ink); }
+.by { margin: 22px 0 0; font-family: var(--mono); font-size: 13px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--muted); }
+.by a { font-weight: 700; }
+
+/* ------------------------------------------------------------------ buttons */
+figcaption, .cap { margin-top: 8px; font-size: 14.5px; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 2px solid var(--ink); border-radius: 999px; font-family: var(--mono); font-weight: 700; font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase; text-decoration: none; color: var(--ink); background: var(--paper); }
+.btn.solid { background: var(--ink); color: var(--paper); }
+.btn:hover { background: var(--paper-deep); color: var(--ink); }
+.btn.solid:hover { background: var(--accent-text); border-color: var(--accent-text); color: #FFFFFF; }
+
+/* ----------------------------------------------------------------- sections */
+section { padding: 70px 0 6px; scroll-margin-top: var(--bar-clear); }
+.sect-head { position: relative; padding-bottom: 14px; margin-bottom: 22px; }
+.sect-head::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--dash-ink); }
+.sect-head .n { display: block; margin-bottom: 6px; font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent-text); }
+.sect-head .n::after { content: " /"; }
+h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(34px, 7.6vw, 58px); line-height: 1.05; letter-spacing: -0.01em; color: var(--ink); text-wrap: balance; }
+h3 { margin: 0; font-family: var(--mono); font-size: 18px; font-weight: 700; line-height: 1.3; letter-spacing: -0.2px; color: var(--ink); }
+.label { margin: 0 0 8px; font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent-text); }
+.label.gap { margin-top: 34px; }
+p { margin: 0 0 14px; }
+b, strong { color: var(--ink); font-weight: 600; }
+.intro { max-width: 44em; font-size: 18px; }
+.dash { height: 3px; margin: 40px 0 30px; border: 0; background: var(--dash-blue); }
+.note { margin-top: 22px; font-size: 15px; color: var(--muted); max-width: 46em; }
+
+/* ------------------------------------------------------------------- charts */
+.chart { margin: 0; border: 2px solid var(--ink); border-radius: 16px; padding: 18px 18px 14px; background: var(--paper); min-width: 0; }
+.chart .sub { margin: 4px 0 16px; font-size: 14.5px; color: var(--muted); }
+.plot { --label: 9.2em; --room: 4.6em; position: relative; }
+.row { display: grid; grid-template-columns: var(--label) minmax(0, 1fr); align-items: center; gap: 12px; padding: 7px 0; position: relative; }
+.row .name { font-size: 15px; line-height: 1.25; color: var(--body); text-align: right; }
+.row .track { position: relative; height: 22px; margin-right: var(--room); }
+.plot .rows { position: relative; }
+/* gridlines: hairlines at each tick, solid, behind the bars; the first is the baseline */
+.plot .grid { position: absolute; top: 0; bottom: 0; left: calc(var(--label) + 12px); right: var(--room); display: flex; justify-content: space-between; pointer-events: none; }
+.plot .grid i { width: 1px; background: var(--grid); }
+.plot .grid i:first-child { background: var(--ink); width: 2px; margin-left: -1px; }
+.bar-fill { position: absolute; left: 0; top: 0; height: 22px; width: calc(var(--v) / var(--max) * 100%); background: var(--accent); border-radius: 0 4px 4px 0; }
+/* the stock model, the baseline everything is compared with: hatched ink */
+.bar-fill.base { background: var(--hatch); border: 2px solid var(--ink); border-left: 0; }
+.row .val { position: absolute; top: 50%; left: calc(var(--v) / var(--max) * 100%); transform: translate(8px, -50%); font-family: var(--mono); font-size: 14.5px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+.row .tip { position: absolute; z-index: 3; left: calc(var(--label) + 12px); bottom: calc(100% - 2px); max-width: min(22em, 100%); padding: 7px 11px; border-radius: 8px; background: var(--ink); color: var(--paper); font-size: 13.5px; line-height: 1.35; opacity: 0; visibility: hidden; transition: opacity 0.12s; pointer-events: none; }
+.row:hover .tip, .row:focus .tip, .row:focus-within .tip { opacity: 1; visibility: visible; }
+.row:hover, .row:focus { background: var(--paper-deep); outline: none; }
+.row:focus-visible { outline: 3px solid var(--accent); outline-offset: 0; }
+/* the axis keeps the rows' font size so its em-based margins line up with the bars; only the tick text is small */
+.axis { display: flex; justify-content: space-between; margin: 4px var(--room) 0 calc(var(--label) + 12px); color: var(--muted); }
+.axis span { width: 0; display: flex; justify-content: center; white-space: nowrap; font-family: var(--mono); font-size: 12px; }
+.key { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 18px 0 0; padding: 0; list-style: none; font-size: 13.5px; color: var(--muted); }
+.key li { display: inline-flex; align-items: center; gap: 7px; }
+.key i { width: 22px; height: 12px; background: var(--accent); border-radius: 0 3px 3px 0; }
+.key i.base { background: var(--hatch); border: 2px solid var(--ink); border-left: 0; }
+.chart .cap { margin-top: 14px; font-size: 15px; color: var(--body); }
+.chart .src { margin: 8px 0 0; font-family: var(--mono); font-size: 12px; letter-spacing: 0.3px; color: var(--muted); }
+.chart details { margin-top: 10px; font-size: 14.5px; }
+.chart summary { cursor: pointer; width: fit-content; padding: 4px 0; font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--accent-text); }
+table { border-collapse: collapse; width: 100%; margin-top: 6px; font-size: 14.5px; }
+th, td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 2px dashed var(--grid); vertical-align: top; }
+th { font-family: var(--mono); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink); }
+td.num, th.num { text-align: right; padding-right: 0; padding-left: 10px; font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ----------------------------------------------------------------- in short */
+/* the whole project in three steps, joined by arrows: the problem, what I built, the result */
+.short { padding: 46px 0 0; }
+.path { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 34px; }
+.path li { position: relative; padding: 18px 20px 6px; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper); }
+.path li + li::before { content: "↓"; position: absolute; left: 50%; top: -31px; transform: translateX(-50%); font-family: var(--mono); font-size: 20px; font-weight: 700; line-height: 1; color: var(--accent-text); }
+.path .k { display: block; font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); }
+.path .v { display: block; margin: 6px 0 6px; font-family: var(--display); font-weight: 400; font-size: clamp(46px, 6vw, 58px); line-height: 1.05; letter-spacing: -0.01em; color: var(--ink); }
+.path .v.words { font-size: clamp(30px, 3.4vw, 36px); line-height: 1.15; padding: 10px 0 12px; color: var(--accent-text); }
+.path li:last-child { background: var(--ink); border-color: var(--ink); }
+.path li:last-child .k { color: var(--signal); }
+.path li:last-child .v, .path li:last-child p { color: var(--paper); }
+.path p { font-size: 16px; line-height: 1.45; }
+
+/* ------------------------------------------------------------------- folds */
+/* a row that states its point and opens to show the detail behind it */
+.fold { position: relative; }
+.fold::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--dash-ink); opacity: 0.55; }
+.fold > summary { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 14px; padding: 15px 0; cursor: pointer; list-style: none; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary .t { font-size: 18px; font-weight: 600; line-height: 1.3; color: var(--ink); }
+.fold > summary::after { content: "+"; display: grid; place-items: center; width: 30px; height: 30px; border: 2px solid var(--ink); border-radius: 50%; font-family: var(--mono); font-size: 18px; font-weight: 700; line-height: 1; color: var(--ink); }
+.fold[open] > summary::after { content: "−"; background: var(--ink); color: var(--paper); }
+.fold > summary:hover .t { color: var(--accent-text); }
+.fold > summary:hover::after { background: var(--paper-deep); color: var(--ink); }
+.fold-body { padding: 2px 0 22px; }
+.fold-body > p { max-width: 44em; }
+.fold.lone { margin-top: 18px; }
+.fold.lone::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--dash-ink); opacity: 0.55; }
+.fold.lone + .fold.lone { margin-top: 0; }
+.fold.lone + .fold.lone::before { display: none; }
+.fold-body > .refs, .fold-body > .files, .fold-body > .cards { margin-top: 0; }
+.fold-body > .refs li:last-child::after, .fold-body > .files li:last-child::after { display: none; }
+
+/* the findings: numbered, each one a fold */
+.findings { counter-reset: finding; list-style: none; margin: 14px 0 0; padding: 0; position: relative; }
+.findings::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--dash-ink); opacity: 0.55; }
+.findings > li { counter-increment: finding; }
+.findings .fold > summary { grid-template-columns: 34px 1fr auto; }
+.findings .fold > summary::before { content: counter(finding, decimal-leading-zero); font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--accent-text); }
+.findings .fold-body { padding-left: 0; }
+/* inside a finding the chart needs no frame of its own */
+.fold .chart { border: 0; border-radius: 0; padding: 0; background: none; }
+.fold .chart h3 { font-size: 15px; letter-spacing: 0.2px; text-transform: uppercase; }
+
+/* ------------------------------------------------------------ three stages */
+.stages { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 34px; }
+.stages > li { position: relative; padding: 18px 20px 8px; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper); }
+.stages > li + li::before { content: "↓"; position: absolute; left: 50%; top: -31px; transform: translateX(-50%); font-family: var(--mono); font-size: 20px; font-weight: 700; line-height: 1; color: var(--accent-text); }
+.stages .k { display: block; font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--accent-text); }
+.stages h3 { margin: 4px 0 2px; font-family: var(--display); font-weight: 400; font-size: 32px; line-height: 1.1; letter-spacing: 0; }
+.stages > li > p { margin-bottom: 10px; font-size: 16px; color: var(--muted); }
+.stages ul { list-style: none; margin: 0; padding: 0; }
+.stages ul li { position: relative; padding: 10px 0 11px; }
+.stages ul li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--dash-ink); opacity: 0.55; }
+.stages ul b { display: block; font-family: var(--mono); font-weight: 700; font-size: 15.5px; }
+.stages ul span { display: block; font-size: 15px; color: var(--muted); }
+
+/* ------------------------------------------------------- on to the next part */
+.next { display: flex; align-items: center; gap: 14px; width: fit-content; max-width: 100%; margin: 44px 0 0 auto; padding: 8px 8px 8px 20px; border: 2px solid var(--ink); border-radius: 999px; background: var(--paper); text-decoration: none; color: var(--ink); }
+.next span { font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase; color: var(--muted); }
+.next b { font-family: var(--mono); font-size: 13.5px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; }
+.next i { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--ink); color: var(--paper); font-style: normal; font-size: 16px; line-height: 1; }
+.next i::before { content: "↓"; }
+.next.up i::before { content: "↑"; }
+.next:hover { background: var(--ink); color: var(--paper); }
+.next:hover span { color: var(--paper); }
+.next:hover i { background: var(--signal); color: var(--ink); }
+
+/* ------------------------------------------------------------------- lists */
+/* rows between dashed rules, like a ledger */
+.changes, .files, .refs { list-style: none; padding: 0; margin: 12px 0 0; }
+.changes li, .files li, .refs li { position: relative; padding: 13px 0 14px; }
+.changes li::after, .files li::after, .refs li::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--dash-ink); opacity: 0.55; }
+.changes li { display: grid; gap: 3px; }
+.changes .was { color: var(--body); }
+.changes .now { color: var(--ink); font-weight: 600; padding-left: 26px; position: relative; }
+.changes .now::before { content: "→"; position: absolute; left: 0; font-family: var(--mono); color: var(--accent-text); }
+.steps { counter-reset: step; list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
+.steps li { counter-increment: step; display: grid; grid-template-columns: 34px 1fr; gap: 8px; align-items: baseline; }
+.steps li::before { content: counter(step, decimal-leading-zero); font-family: var(--mono); font-weight: 700; color: var(--accent-text); font-size: 15px; }
+.two { display: grid; gap: 28px; grid-template-columns: 1fr; }
+.two figure { margin: 0; }
+.photo { width: 100%; border: 2px solid var(--ink); border-radius: 16px; }
+.photo.dots { aspect-ratio: 3 / 2; image-rendering: pixelated; }
+
+/* ------------------------------------------------------- the build, in 3D */
+/* the model stays on screen while the steps scroll past it */
+.build { display: grid; gap: 0; margin-top: 26px; }
+.viewer { position: sticky; top: var(--bar-clear); z-index: 2; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper); }
+.stage { position: relative; height: 36vh; min-height: 230px; overflow: hidden; border-radius: 14px 14px 0 0; background-image: linear-gradient(90deg, var(--square) 1px, transparent 1px), linear-gradient(var(--square) 1px, transparent 1px); background-size: 32px 32px; background-position: center; }
+.stage canvas.model { cursor: grab; }
+.stage canvas.model:active { cursor: grabbing; }
+.stage .fallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 14px; }
+.stage .fallback img { max-height: 100%; width: auto; }
+.stage .hint { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); padding: 4px 12px; border-radius: 999px; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; pointer-events: none; transition: opacity 0.4s; }
+.stage .hint.gone { opacity: 0; }
+.about-part { position: absolute; left: 10px; top: 10px; margin: 0; padding: 4px 11px; border: 2px solid var(--ink); border-radius: 999px; background: var(--paper); font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 0.4px; color: var(--ink); pointer-events: none; }
+.about-part:empty { display: none; }
+
+/* one compact row of controls under the model */
+.toolbar { display: grid; gap: 8px; padding: 10px 12px 12px; border-top: 2px solid var(--ink); }
+.slider { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink); }
+input[type="range"] { width: 100%; accent-color: var(--accent); height: 26px; }
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tool, .menu summary, .seg button { font-family: var(--mono); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink); background: var(--paper); cursor: pointer; }
+.tool, .menu summary { display: inline-flex; align-items: center; gap: 7px; padding: 5px 12px; border: 2px solid var(--ink); border-radius: 999px; }
+.tool:hover, .menu summary:hover, .seg button:hover { background: var(--paper-deep); }
+.tool.dot::before { content: ""; width: 9px; height: 9px; border: 2px solid var(--ink); border-radius: 50%; background: transparent; }
+.tool.dot[aria-pressed="true"]::before { background: var(--signal); }
+.seg { display: inline-flex; border: 2px solid var(--ink); border-radius: 999px; overflow: hidden; }
+.seg button { padding: 5px 11px; border: 0; }
+.seg button + button { border-left: 2px solid var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.seg button:focus-visible { outline-offset: -3px; }
+.menu { position: relative; }
+.menu summary { list-style: none; }
+.menu summary::-webkit-details-marker { display: none; }
+.menu summary::after { content: "▴"; font-size: 11px; line-height: 1; }
+.menu[open] summary { background: var(--ink); color: var(--paper); }
+.chips { position: absolute; left: 0; bottom: calc(100% + 8px); z-index: 5; display: grid; gap: 2px; width: max-content; max-width: min(280px, 78vw); max-height: min(400px, 48vh); overflow-y: auto; padding: 6px; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper); }
+.chip { display: flex; align-items: center; gap: 9px; padding: 5px 10px; border: 0; border-radius: 999px; background: transparent; font: inherit; font-size: 14.5px; text-align: left; color: var(--ink); cursor: pointer; }
+.chip i { flex: none; width: 12px; height: 12px; background: var(--c, #999); border: 1px solid var(--ink); border-radius: 50%; }
+.chip:hover { background: var(--paper-deep); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.chip[aria-pressed="true"] i { border-color: var(--paper); }
+
+/* the steps: each is a screen-high stretch of scrolling, so each has time to play out on the model */
+.build-steps { counter-reset: build; list-style: none; margin: 0; padding: 0; }
+.build-steps li { counter-increment: build; position: relative; min-height: 46vh; padding: 30px 0 20px; transition: opacity 0.25s; }
+.build-steps li + li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--dash-ink); opacity: 0.55; }
+.build-steps .k { display: block; margin-bottom: 6px; font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent-text); }
+.build-steps .k::after { content: " " counter(build, decimal-leading-zero) " /"; }
+.build-steps h3 { margin-bottom: 8px; font-family: var(--display); font-weight: 400; font-size: clamp(26px, 5vw, 34px); line-height: 1.1; letter-spacing: 0; }
+.build-steps p { max-width: 24em; font-size: 18px; }
+/* with the page's script running, the step in play stands out from the others */
+.build.live .build-steps li { opacity: 0.4; }
+.build.live .build-steps li.is-on { opacity: 1; }
+
+/* the parts list: name, copies, downloads on one ledger row */
+.files li { display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; align-items: baseline; }
+.files b { font-family: var(--mono); font-size: 15.5px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; }
+.files span { grid-column: 1; font-size: 14px; color: var(--muted); }
+.files .get { grid-column: 2; grid-row: 1 / span 2; align-self: center; display: flex; gap: 14px; }
+.files a { font-family: var(--mono); font-size: 13px; font-weight: 700; white-space: nowrap; }
+
+/* ---------------------------------------------------------------- research */
+.refs .t { color: var(--ink); font-weight: 500; }
+.refs .u { display: block; font-size: 15px; color: var(--muted); margin-top: 2px; }
+.refs a { font-family: var(--mono); font-size: 14px; font-weight: 700; white-space: nowrap; }
+.cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); padding: 0; margin: 14px 0 0; list-style: none; }
+.cards a { display: block; height: 100%; padding: 13px 15px; border: 2px solid var(--ink); border-radius: 16px; background: var(--paper); text-decoration: none; color: var(--body); }
+.cards a:hover { background: var(--ink); color: var(--paper); }
+.cards a:hover code { color: var(--paper); }
+.cards code { display: block; font-family: var(--mono); font-size: 13.5px; font-weight: 700; color: var(--accent-text); margin-bottom: 4px; overflow-wrap: anywhere; }
+.cards span { font-size: 15px; }
+
+footer { margin-top: 56px; padding: 24px 0 40px; position: relative; font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.3px; color: var(--muted); }
+footer::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--dash-ink); }
+footer p { margin: 0 0 6px; }
+
+/* -------------------------------------------------------------- wider screens */
+@media (min-width: 720px) {
+  :root { --gutter: 32px; }
+  body { font-size: 18px; }
+  .plot { --label: 12.5em; }
+  .hero { padding-top: 40px; }
+  .two { grid-template-columns: 1fr 1fr; }
+  .io { top: auto; bottom: 4px; font-size: 12px; }
+  .path, .stages { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+  .steps.pair { grid-template-columns: 1fr 1fr; gap: 14px 44px; }
+  .path li + li::before, .stages > li + li::before { content: "→"; left: -31px; top: 50%; transform: translateY(-50%); }
+}
+@media (min-width: 940px) {
+  /* the foot of the hero spreads to three corners */
+  .hero-stage { height: clamp(300px, 44vh, 460px); }
+  .hero-foot { grid-template-columns: 1fr auto 1fr; align-items: end; margin-top: 30px; }
+  .lede { justify-self: start; text-align: left; max-width: 21em; font-size: 16.5px; }
+  .tags { justify-self: end; justify-content: flex-end; max-width: 15em; text-align: right; }
+  /* inside a finding: the chart on the left, what it shows and its numbers on the right */
+  .fold .chart { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); column-gap: 44px; align-items: start; }
+  .fold .chart > h3, .fold .chart > .sub, .fold .chart > .plot { grid-column: 1; }
+  .fold .chart > .cap, .fold .chart > details, .fold .chart > .src { grid-column: 2; }
+  .fold .chart > .cap { margin-top: 0; }
+  .findings .fold-body { padding-left: 48px; }
+  /* the model on the left, the steps scrolling on the right */
+  .build { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 44px; align-items: start; }
+  .stage { height: min(58vh, 540px); }
+  .build-steps { padding-top: 26vh; }
+  .build-steps li { min-height: 62vh; padding-top: 34px; }
+}
+@media (max-width: 600px) {
+  .brand span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .brand { padding: 0 6px 0 8px; }
+  .pill .cta { display: none; }
+  .pill nav { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 18px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 18px), transparent); padding-right: 10px; }
+  .pill nav a { padding: 7px 6px; font-size: 11px; letter-spacing: 0.3px; }
+  .eyebrow { font-size: 11px; letter-spacing: 0.8px; }
+}
+@media (max-width: 420px) {
+  .plot { --label: 7.4em; --room: 4.1em; }
+  .row .name { font-size: 14px; }
+  .files li { grid-template-columns: 1fr; }
+  .files .get { grid-column: 1; grid-row: auto; margin-top: 6px; }
+}
+/* on a very short screen the model would leave no room for the steps, so it scrolls with them */
+@media (max-height: 520px) {
+  .viewer { position: static; }
+  .build-steps li { min-height: 0; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+@media print {
+  body { background-image: none; }
+  .bar, .viewer, .actions, .wave, .hold, .go, .next { display: none; }
+  .build-steps li { min-height: 0; opacity: 1 !important; }
+  section { padding-top: 20px; }
+}

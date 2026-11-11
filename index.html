@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WillSpeak: an offline, hands-free speech device</title>
+<meta name="description" content="WillSpeak hears a person with severe dysarthria and repeats their words in a clear voice. Results, the 3D-printed case, the research behind it and the code.">
+<meta property="og:title" content="WillSpeak">
+<meta property="og:description" content="An offline, hands-free speech device on a Raspberry Pi 5. Results, CAD models, research and code.">
+<meta property="og:image" content="assets/img/device-front.jpg">
+<meta name="theme-color" content="#E8E5D2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cg fill='%232F5BEA'%3E%3Crect x='5' y='11' width='4' height='10' rx='2'/%3E%3Crect x='11' y='6' width='4' height='20' rx='2'/%3E%3Crect x='23' y='11' width='4' height='10' rx='2'/%3E%3C/g%3E%3Crect x='17' y='3' width='4' height='26' rx='2' fill='%237A4FE0'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/YoungSerif-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/Lexend-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/SpaceMono-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css">
+<script type="importmap">{ "imports": { "three": "./assets/vendor/three.module.min.js" } }</script>
+</head>
+<body>
+<a class="skip" href="#results">Skip to the results</a>
+
+<header class="bar">
+  <div class="pill">
+    <a class="brand" href="#top" aria-label="WillSpeak, top of page"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span>Will<b>Speak</b></span></a>
+    <nav aria-label="Sections">
+      <a href="#results">Results</a>
+      <a href="#device">Device</a>
+      <a href="#method">Method</a>
+      <a href="#research">Research</a>
+      <a href="#code">Code</a>
+    </nav>
+    <a class="cta" href="poster/WillSpeak-Poster.pdf">Poster</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ================================================================== hero -->
+<div class="hero" id="hero">
+  <div class="wrap">
+    <p class="eyebrow">ENGR 1113 / Lipscomb University / Fall 2026</p>
+    <h1>It listens, then says it <b>clearly.</b></h1>
+    <div class="hero-stage" id="hero-stage">
+      <canvas class="wave" id="wave" aria-hidden="true"></canvas>
+      <img class="still" id="hero-still" src="assets/img/device-model.png" width="1200" height="900" alt="The WillSpeak case as a 3D model: a black printed case with a blue lid on top of a battery tray, seen from the side with the ports.">
+      <span class="io in" aria-hidden="true">Speech in</span>
+      <span class="io out" aria-hidden="true">Clear voice out</span>
+      <button class="hold" id="hold" type="button" aria-pressed="false" hidden><i aria-hidden="true"></i><span>Hold to take it apart</span></button>
+    </div>
+    <div class="hero-foot">
+      <p class="lede">WillSpeak is a small box that hears a person with severe dysarthria and repeats their words in a clear voice. It works offline, and it needs no hands.</p>
+      <a class="go" href="#results"><i aria-hidden="true"></i>See the results</a>
+      <ul class="tags" aria-label="In short">
+        <li>Raspberry Pi 5</li>
+        <li>Works offline</li>
+        <li>Hands-free</li>
+        <li>3D-printed case</li>
+      </ul>
+    </div>
+    <p class="by">Jackson Coon · <a href="poster/WillSpeak-Poster.pdf">Poster (PDF)</a></p>
+  </div>
+</div>
+
+<!-- ============================================================== in short -->
+<div class="short" id="short">
+  <div class="wrap">
+    <p class="label">In short</p>
+    <ol class="path">
+      <li><span class="k">The problem</span><b class="v">68.1%</b><p>of words come out wrong when a stock speech recogniser hears three speakers with severe dysarthria.</p></li>
+      <li><span class="k">What I built</span><b class="v words">Fit to one voice</b><p>An open recogniser adapted to one speaker at a time, with a small language model, on a Raspberry Pi 5 in a 3D-printed case. No internet, no hands.</p></li>
+      <li><span class="k">The result</span><b class="v">28.8%</b><p>of the same 1,304 words wrong. Whole sentences right rise from 13.3% to 31.7%.</p></li>
+    </ol>
+  </div>
+</div>
+
+<!-- ================================================================ results -->
+<section id="results">
+  <div class="wrap">
+    <div class="sect-head"><span class="n">01</span><h2>Results from my lab runs</h2></div>
+    <p class="intro">Seven findings, from the starting point to the device. Every number is from a run I recorded on TORGO, a public corpus of dysarthric speech, and the models are tested only on sentences kept out of their training. Open a finding to see its chart.</p>
+
+    <ul class="key" aria-label="How to read the bars">
+      <li><i class="base"></i>Stock model, the starting point</li>
+      <li><i></i>My models and the device</li>
+    </ul>
+
+    <ol class="findings">
+      <li><details class="fold">
+        <summary><span class="t">Before any training, the stock recogniser gets 59.6% of words wrong on four severe speakers</span></summary>
+        <div class="fold-body">
+          <p>Before any training, the stock recogniser got <b>59.6%</b> of words wrong on 292 sentences from TORGO's four severe speakers (95% interval 55.2 to 63.8). That number set the first requirement: a model personalised to one voice.</p>
+        </div>
+      </details></li>
+      <li><details class="fold" open>
+        <summary><span class="t">Adapting it to the speaker more than halves the word errors</span></summary>
+        <div class="fold-body">
+      <figure class="chart" aria-labelledby="c2">
+        <h3 id="c2">Word error rate</h3>
+        <p class="sub">Wrong words out of 1,304, over all 513 held-out clips. Lower is better.</p>
+        <div class="plot" style="--max: 80">
+          <div class="rows">
+            <div class="grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="row" tabindex="0"><span class="name">Stock model</span><span class="track"><span class="bar-fill base" style="--v: 68.1"></span><span class="val" style="--v: 68.1">68.1%</span></span><span class="tip" role="tooltip">888 of 1,304 words wrong.</span></div>
+            <div class="row" tabindex="0"><span class="name">Adapted</span><span class="track"><span class="bar-fill" style="--v: 32.7"></span><span class="val" style="--v: 32.7">32.7%</span></span><span class="tip" role="tooltip">427 of 1,304 words wrong.</span></div>
+            <div class="row" tabindex="0"><span class="name">Adapted + language model</span><span class="track"><span class="bar-fill" style="--v: 28.8"></span><span class="val" style="--v: 28.8">28.8%</span></span><span class="tip" role="tooltip">376 of 1,304 words wrong. Single words are chosen with their own weights.</span></div>
+          </div>
+          <div class="axis" aria-hidden="true"><span>0</span><span>20</span><span>40</span><span>60</span><span>80%</span></div>
+        </div>
+        <p class="cap">Adapting the recogniser to the speaker does most of the work. The clips are 120 sentences and 393 single words.</p>
+        <details><summary>The numbers</summary>
+          <table><thead><tr><th>Model</th><th class="num">Wrong</th><th class="num">Of</th><th class="num">Rate</th></tr></thead>
+          <tbody><tr><td>Stock model</td><td class="num">888</td><td class="num">1,304</td><td class="num">68.1%</td></tr>
+          <tr><td>Adapted</td><td class="num">427</td><td class="num">1,304</td><td class="num">32.7%</td></tr>
+          <tr><td>Adapted + language model</td><td class="num">376</td><td class="num">1,304</td><td class="num">28.8%</td></tr></tbody></table>
+        </details>
+        <p class="src">Lab test 36, November 2026. TORGO speakers M01, M02 and M04.</p>
+      </figure>
+        </div>
+      </details></li>
+      <li><details class="fold">
+        <summary><span class="t">A language model lifts whole sentences right from 24.2% to 31.7%</span></summary>
+        <div class="fold-body">
+      <figure class="chart" aria-labelledby="c1">
+        <h3 id="c1">Whole sentences right</h3>
+        <p class="sub">Share of 120 held-out sentences with every word right. Higher is better.</p>
+        <div class="plot" style="--max: 40">
+          <div class="rows">
+            <div class="grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="row" tabindex="0"><span class="name">Stock model</span><span class="track"><span class="bar-fill base" style="--v: 13.3"></span><span class="val" style="--v: 13.3">13.3%</span></span><span class="tip" role="tooltip">16 of 120 sentences. Parakeet-TDT 0.6B as downloaded.</span></div>
+            <div class="row" tabindex="0"><span class="name">Adapted</span><span class="track"><span class="bar-fill" style="--v: 24.2"></span><span class="val" style="--v: 24.2">24.2%</span></span><span class="tip" role="tooltip">29 of 120 sentences. Pretrained on the other severe speakers, then a 1 M-parameter adapter per speaker.</span></div>
+            <div class="row" tabindex="0"><span class="name">Adapted + language model</span><span class="track"><span class="bar-fill" style="--v: 31.7"></span><span class="val" style="--v: 31.7">31.7%</span></span><span class="tip" role="tooltip">38 of 120 sentences. Qwen2.5-0.5B chooses among nine decodes of each clip: 10 sentences gained, 1 lost.</span></div>
+          </div>
+          <div class="axis" aria-hidden="true"><span>0</span><span>10</span><span>20</span><span>30</span><span>40%</span></div>
+        </div>
+        <p class="cap">The language model adds 7.5 points, with a 95% interval of 2.5 to 12.5.</p>
+        <details><summary>The numbers</summary>
+          <table><thead><tr><th>Model</th><th class="num">Right</th><th class="num">Of</th><th class="num">Share</th></tr></thead>
+          <tbody><tr><td>Stock model</td><td class="num">16</td><td class="num">120</td><td class="num">13.3%</td></tr>
+          <tr><td>Adapted</td><td class="num">29</td><td class="num">120</td><td class="num">24.2%</td></tr>
+          <tr><td>Adapted + language model</td><td class="num">38</td><td class="num">120</td><td class="num">31.7%</td></tr></tbody></table>
+        </details>
+        <p class="src">Lab test 36, November 2026. TORGO speakers M01, M02 and M04.</p>
+      </figure>
+        </div>
+      </details></li>
+      <li><details class="fold">
+        <summary><span class="t">Pretraining, then a small adapter, was the best training recipe</span></summary>
+        <div class="fold-body">
+      <figure class="chart" aria-labelledby="c3">
+        <h3 id="c3">What each training choice was worth</h3>
+        <p class="sub">Word error rate on the 425 words of the three speakers' test clips, mean of three training seeds. Lower is better.</p>
+        <div class="plot" style="--max: 80">
+          <div class="rows">
+            <div class="grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="row" tabindex="0"><span class="name">Stock model</span><span class="track"><span class="bar-fill base" style="--v: 76.0"></span><span class="val" style="--v: 76.0">76.0%</span></span><span class="tip" role="tooltip">323 of 425 words wrong.</span></div>
+            <div class="row" tabindex="0"><span class="name">Adapter only</span><span class="track"><span class="bar-fill" style="--v: 46.0"></span><span class="val" style="--v: 46.0">46.0%</span></span><span class="tip" role="tooltip">195.3 words wrong. One added layer trained on the speaker's clips, the rest of the model frozen.</span></div>
+            <div class="row" tabindex="0"><span class="name">Retrain whole blocks</span><span class="track"><span class="bar-fill" style="--v: 45.8"></span><span class="val" style="--v: 45.8">45.8%</span></span><span class="tip" role="tooltip">194.7 words wrong. Whole encoder blocks retrained on the speaker's clips.</span></div>
+            <div class="row" tabindex="0"><span class="name">Pretrain, then whole blocks</span><span class="track"><span class="bar-fill" style="--v: 45.3"></span><span class="val" style="--v: 45.3">45.3%</span></span><span class="tip" role="tooltip">192.3 words wrong. Pretrained on the other severe speakers first.</span></div>
+            <div class="row" tabindex="0"><span class="name">Pretrain, then adapter</span><span class="track"><span class="bar-fill" style="--v: 41.9"></span><span class="val" style="--v: 41.9">41.9%</span></span><span class="tip" role="tooltip">178.0 words wrong. The recipe the device uses.</span></div>
+          </div>
+          <div class="axis" aria-hidden="true"><span>0</span><span>20</span><span>40</span><span>60</span><span>80%</span></div>
+        </div>
+        <p class="cap">Pretraining on the other severe speakers and then fitting a small adapter to one speaker gave the lowest error, so that is the recipe I kept. These 166 test clips are a different, smaller set than the 513 clips above, so the percentages differ.</p>
+        <details><summary>The numbers</summary>
+          <table><thead><tr><th>Recipe</th><th class="num">Wrong of 425</th><th class="num">Rate</th></tr></thead>
+          <tbody><tr><td>Stock model</td><td class="num">323</td><td class="num">76.0%</td></tr>
+          <tr><td>Adapter only</td><td class="num">195.3</td><td class="num">46.0%</td></tr>
+          <tr><td>Retrain whole blocks</td><td class="num">194.7</td><td class="num">45.8%</td></tr>
+          <tr><td>Pretrain, then whole blocks</td><td class="num">192.3</td><td class="num">45.3%</td></tr>
+          <tr><td>Pretrain, then adapter</td><td class="num">178.0</td><td class="num">41.9%</td></tr></tbody></table>
+        </details>
+        <p class="src">Lab runs of October 2026. 166 test clips of M01, M02 and M04.</p>
+      </figure>
+        </div>
+      </details></li>
+      <li><details class="fold">
+        <summary><span class="t">The adapter works best after block 8 of the encoder's 24</span></summary>
+        <div class="fold-body">
+      <figure class="chart" aria-labelledby="c4">
+        <h3 id="c4">Where the adapter goes</h3>
+        <p class="sub">Word error rate on the same 425 test words by the encoder block the adapter follows. Lower is better.</p>
+        <div class="plot" style="--max: 80">
+          <div class="rows">
+            <div class="grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="row" tabindex="0"><span class="name">After block 8</span><span class="track"><span class="bar-fill" style="--v: 41.0"></span><span class="val" style="--v: 41.0">41.0%</span></span><span class="tip" role="tooltip">174.3 words wrong, mean of three seeds.</span></div>
+            <div class="row" tabindex="0"><span class="name">After block 12</span><span class="track"><span class="bar-fill" style="--v: 52.9"></span><span class="val" style="--v: 52.9">52.9%</span></span><span class="tip" role="tooltip">224.7 words wrong.</span></div>
+            <div class="row" tabindex="0"><span class="name">After block 16</span><span class="track"><span class="bar-fill" style="--v: 55.2"></span><span class="val" style="--v: 55.2">55.2%</span></span><span class="tip" role="tooltip">234.7 words wrong.</span></div>
+            <div class="row" tabindex="0"><span class="name">After block 24</span><span class="track"><span class="bar-fill" style="--v: 59.0"></span><span class="val" style="--v: 59.0">59.0%</span></span><span class="tip" role="tooltip">250.7 words wrong.</span></div>
+          </div>
+          <div class="axis" aria-hidden="true"><span>0</span><span>20</span><span>40</span><span>60</span><span>80%</span></div>
+        </div>
+        <p class="cap">The adapter is one added layer of about a million numbers. After block 8 of the encoder's 24 it works best; every later position I tried did worse.</p>
+        <details><summary>The numbers</summary>
+          <table><thead><tr><th>Adapter after</th><th class="num">Wrong of 425</th><th class="num">Rate</th></tr></thead>
+          <tbody><tr><td>Block 8</td><td class="num">174.3</td><td class="num">41.0%</td></tr>
+          <tr><td>Block 12</td><td class="num">224.7</td><td class="num">52.9%</td></tr>
+          <tr><td>Block 16</td><td class="num">234.7</td><td class="num">55.2%</td></tr>
+          <tr><td>Block 24</td><td class="num">250.7</td><td class="num">59.0%</td></tr></tbody></table>
+        </details>
+        <p class="src">Lab test 34, October 2026.</p>
+      </figure>
+        </div>
+      </details></li>
+      <li><details class="fold">
+        <summary><span class="t">The 8-bit copy that runs on the Pi costs 1 to 4 words in 425</span></summary>
+        <div class="fold-body">
+          <p>The Pi runs an 8-bit copy of the model. On the adapted model the 8-bit copy cost 1 to 4 words out of 425 in the lab, so the small file is the one that ships.</p>
+        </div>
+      </details></li>
+      <li><details class="fold">
+        <summary><span class="t">The Pi 5 decodes a 3 second phrase in 0.40 s</span></summary>
+        <div class="fold-body">
+      <figure class="chart" aria-labelledby="c5">
+        <h3 id="c5">Speed on the device</h3>
+        <p class="sub">Seconds to decode a 3 second phrase. Lower is better.</p>
+        <div class="plot" style="--max: 2">
+          <div class="rows">
+            <div class="grid" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="row" tabindex="0"><span class="name">Mini-PC, first choice</span><span class="track"><span class="bar-fill base" style="--v: 1.535"></span><span class="val" style="--v: 1.535">1.54 s</span></span><span class="tip" role="tooltip">1.535 s on the mini-PC I started with.</span></div>
+            <div class="row" tabindex="0"><span class="name">Pi 5, one thread</span><span class="track"><span class="bar-fill" style="--v: 0.616"></span><span class="val" style="--v: 0.616">0.62 s</span></span><span class="tip" role="tooltip">0.616 s, 0.21 of real time.</span></div>
+            <div class="row" tabindex="0"><span class="name">Pi 5, two threads</span><span class="track"><span class="bar-fill" style="--v: 0.396"></span><span class="val" style="--v: 0.396">0.40 s</span></span><span class="tip" role="tooltip">0.396 s, 0.13 of real time.</span></div>
+            <div class="row" tabindex="0"><span class="name">Pi 5, four threads</span><span class="track"><span class="bar-fill" style="--v: 0.365"></span><span class="val" style="--v: 0.365">0.37 s</span></span><span class="tip" role="tooltip">0.365 s, 0.12 of real time.</span></div>
+          </div>
+          <div class="axis" aria-hidden="true"><span>0</span><span>1.0</span><span>2.0 s</span></div>
+        </div>
+        <p class="cap">The mini-PC was too slow, so the device moved to a Raspberry Pi 5, which is 3.9 times faster at two threads. These timings are the stock 8-bit model on an idle Pi.</p>
+        <details><summary>The numbers</summary>
+          <table><thead><tr><th>Computer</th><th class="num">Seconds</th><th class="num">Share of real time</th></tr></thead>
+          <tbody><tr><td>Mini-PC</td><td class="num">1.535</td><td class="num">0.51</td></tr>
+          <tr><td>Pi 5, one thread</td><td class="num">0.616</td><td class="num">0.21</td></tr>
+          <tr><td>Pi 5, two threads</td><td class="num">0.396</td><td class="num">0.13</td></tr>
+          <tr><td>Pi 5, four threads</td><td class="num">0.365</td><td class="num">0.12</td></tr></tbody></table>
+        </details>
+        <p class="src">Benchmark of 8 September 2026, Raspberry Pi 5 with 8 GB.</p>
+      </figure>
+        </div>
+      </details></li>
+    </ol>
+
+    <p class="label gap">What testing changed</p>
+    <ul class="changes">
+      <li><span class="was">The mini-PC took 1.5 s for a 3 s phrase.</span><span class="now">Moved to a Raspberry Pi 5: 0.40 s.</span></li>
+      <li><span class="was">My first fine-tune scored worse than the stock model (93.5% against 73.9% on one speaker).</span><span class="now">Froze the batch-norm statistics, which brought it back.</span></li>
+      <li><span class="was">A live test in a room picked up other voices.</span><span class="now">Added a gate that opens 12 dB under the speaker's own median level.</span></li>
+      <li><span class="was">The language model's sentence weights lost 10 to 31 of 393 single words.</span><span class="now">Gave single words their own chooser, which gains 4 to 10.</span></li>
+    </ul>
+
+    <a class="next" href="#device"><span>Next</span><b>02 / The device</b><i aria-hidden="true"></i></a>
+  </div>
+</section>
+
+<!-- ================================================================= device -->
+<section id="device">
+  <div class="wrap">
+    <div class="sect-head"><span class="n">02</span><h2>The device</h2></div>
+    <p class="intro">A Raspberry Pi 5 with 8 GB of memory, an NVMe SSD, a fan and a 65 W, 20,000 mAh power bank, in a case I designed and 3D-printed. It goes together with no screws. A lavalier microphone at the collar is the sensor and a speaker is the output.</p>
+
+    <div class="build" id="build">
+      <div class="viewer" id="viewer">
+        <div class="stage" id="stage">
+          <div class="fallback" id="fallback"><img src="assets/img/exploded.png" width="608" height="1262" loading="lazy" alt="Exploded drawing of the case, top to bottom: lid, fan, NVMe SSD board, Raspberry Pi 5, case body with its lid key, rail plate, power bank, battery tray."></div>
+          <p class="about-part" id="about" aria-live="polite"></p>
+          <div class="hint" id="hint" hidden>Drag to turn · pinch to zoom</div>
+        </div>
+        <div class="toolbar" id="toolbar" hidden>
+          <label class="slider"><span>Closed</span><input id="explode" type="range" min="0" max="100" value="62" step="1" aria-label="How far the parts are lifted apart"><span>Apart</span></label>
+          <div class="tools">
+            <details class="menu" id="parts-menu">
+              <summary>Parts</summary>
+              <div class="chips" id="chips" role="group" aria-label="Pick a part to highlight it"></div>
+            </details>
+            <div class="seg" id="views" role="group" aria-label="How the model is drawn">
+              <button type="button" data-view="solid" aria-pressed="true">Solid</button>
+              <button type="button" data-view="xray" aria-pressed="false">X-ray</button>
+              <button type="button" data-view="lines" aria-pressed="false">Lines</button>
+            </div>
+            <button class="tool dot" id="follow" type="button" aria-pressed="true">Follow scroll</button>
+            <button class="tool" id="reset" type="button">Reset</button>
+          </div>
+        </div>
+      </div>
+      <ol class="build-steps" id="build-steps">
+        <li><span class="k">Step</span><h3>The battery</h3><p>The power bank drops into the <b>battery tray</b>, held by sprung fingers.</p></li>
+        <li><span class="k">Step</span><h3>The computer</h3><p>The Pi sits on four pins in the <b>case body</b>; a printed <b>spacer</b> on each pin carries the SSD board.</p></li>
+        <li><span class="k">Step</span><h3>The lid</h3><p>The fan clips into the <b>lid</b>, the lid hooks on and swings shut, and the <b>lid key</b> slides in to lock it.</p></li>
+        <li><span class="k">Step</span><h3>The rail</h3><p>The case slides onto the <b>rail plate</b> until its latch clicks.</p></li>
+      </ol>
+    </div>
+    <p class="cap">Printed parts are shown in the colours of the real print: black, with a blue lid. On screen the parts move straight up and down, and the lid key slides in from the side.</p>
+
+    <hr class="dash">
+
+    <p class="label">The printed prototype</p>
+    <div class="two">
+      <figure>
+        <img class="photo dots" src="assets/img/device-dither.png" width="1200" height="800" loading="lazy" alt="A dotted two-colour picture of the WillSpeak prototype on a workbench: a black 3D-printed case with a blue lid that carries the WillSpeak name and two vent patterns.">
+        <figcaption>A Raspberry Pi 5 and its battery in one case. Drawn from my photograph.</figcaption>
+      </figure>
+      <figure>
+        <img class="photo" src="assets/img/device-ports.jpg" width="1200" height="900" loading="lazy" alt="The prototype from the side: the Pi's Ethernet and USB ports show through the black case, with the blue lid in front and the battery tray behind.">
+        <figcaption>The ports stay open through the case wall.</figcaption>
+      </figure>
+    </div>
+
+    <details class="fold lone">
+      <summary><span class="t">CAD files: every printed part as STL and STEP</span></summary>
+      <div class="fold-body">
+        <p>STL is for a slicer and STEP is for CAD. The parts print in one colour each at 0.2 mm layers with no supports.</p>
+        <ul class="files">
+          <li><b>Case body</b><span>1 copy</span><div class="get"><a href="cad/stl/pi_case_body.stl" download>STL · 1.7 MB</a><a href="cad/step/pi_case_body.step" download>STEP · 1.3 MB</a></div></li>
+          <li><b>Lid</b><span>1 copy, printed face down</span><div class="get"><a href="cad/stl/pi_case_lid.stl" download>STL · 3.9 MB</a><a href="cad/step/pi_case_lid.step" download>STEP · 5.1 MB</a></div></li>
+          <li><b>Lid key</b><span>1 copy</span><div class="get"><a href="cad/stl/lid_key.stl" download>STL · 4 KB</a><a href="cad/step/lid_key.step" download>STEP · 66 KB</a></div></li>
+          <li><b>Spacer</b><span>4 copies, with a brim</span><div class="get"><a href="cad/stl/hat_spacer_print_4.stl" download>STL · 113 KB</a><a href="cad/step/hat_spacer_print_4.step" download>STEP · 14 KB</a></div></li>
+          <li><b>Rail plate</b><span>1 copy</span><div class="get"><a href="cad/stl/rail_plate.stl" download>STL · 19 KB</a><a href="cad/step/rail_plate.step" download>STEP · 356 KB</a></div></li>
+          <li><b>Battery tray</b><span>1 copy</span><div class="get"><a href="cad/stl/battery_tray.stl" download>STL · 490 KB</a><a href="cad/step/battery_tray.step" download>STEP · 544 KB</a></div></li>
+          <li><b>Whole assembly</b><span>all parts in place</span><div class="get"><a href="cad/step/assembly.step" download>STEP · 7.5 MB</a></div></li>
+        </ul>
+      </div>
+    </details>
+
+    <a class="next" href="#method"><span>Next</span><b>03 / How it works</b><i aria-hidden="true"></i></a>
+  </div>
+</section>
+
+<!-- ================================================================= method -->
+<section id="method">
+  <div class="wrap">
+    <div class="sect-head"><span class="n">03</span><h2>How it works</h2></div>
+    <p class="intro">On the device, a phrase passes through seven steps in three stages.</p>
+    <ol class="stages">
+      <li>
+        <span class="k">Stage 1</span>
+        <h3>Hear</h3>
+        <p>Pick the speaker's voice out of the room.</p>
+        <ul>
+          <li><b>Microphone</b><span>raw audio, auto-gain off</span></li>
+          <li><b>Loudness gate</b><span>12 dB under the speaker's median level</span></li>
+          <li><b>Clean up</b><span>trims silence, skips duplicates</span></li>
+        </ul>
+      </li>
+      <li>
+        <span class="k">Stage 2</span>
+        <h3>Understand</h3>
+        <p>Turn the sound into words.</p>
+        <ul>
+          <li><b>Speech recognition</b><span>8-bit Parakeet-TDT 0.6B on the Pi 5</span></li>
+          <li><b>Language model</b><span>Qwen2.5-0.5B picks the best fit</span></li>
+        </ul>
+      </li>
+      <li>
+        <span class="k">Stage 3</span>
+        <h3>Speak</h3>
+        <p>Say it, with no hands.</p>
+        <ul>
+          <li><b>Hands-free check</b><span>speak it, stop it, or sleep</span></li>
+          <li><b>Speaker</b><span>says it in a clear voice</span></li>
+        </ul>
+      </li>
+    </ol>
+
+    <p class="label gap">How the recogniser is trained</p>
+    <ol class="steps pair">
+      <li><span><b>Stock model.</b> Parakeet-TDT 0.6B, an open recogniser with 618 million parameters.</span></li>
+      <li><span><b>Pretrain.</b> Fine-tune it on TORGO's other severe speakers, so it has heard severe dysarthria before it meets the speaker.</span></li>
+      <li><span><b>Adapter.</b> Freeze the model and fit one added layer of about a million parameters to the speaker's own clips.</span></li>
+      <li><span><b>Export.</b> Write an 8-bit file that the Pi 5 runs on its processor.</span></li>
+    </ol>
+    <details class="fold lone">
+      <summary><span class="t">The training data and how it is split</span></summary>
+      <div class="fold-body">
+        <p>TORGO has eight speakers with dysarthria reading words and sentences. The tests use its three severe speakers M01, M02 and M04, with 72 to 156 training clips each.</p>
+        <p>Other TORGO speakers read at least 98% of each severe speaker's prompts, so I split by prompt: 70% train, 10% development and 20% test, the same for every speaker. No test sentence is ever trained on.</p>
+      </div>
+    </details>
+
+    <a class="next" href="#research"><span>Next</span><b>04 / Research and citations</b><i aria-hidden="true"></i></a>
+  </div>
+</section>
+
+<!-- =============================================================== research -->
+<section id="research">
+  <div class="wrap">
+    <div class="sect-head"><span class="n">04</span><h2>Research and citations</h2></div>
+    <p class="intro">Three sources shaped the project. The rest of the reading and the software are listed under them.</p>
+
+    <p class="label">The three I leaned on</p>
+    <ul class="refs">
+      <li><span class="t">Rudzicz, F., Namasivayam, A. K. &amp; Wolff, T. (2012). The TORGO database of acoustic and articulatory speech from speakers with dysarthria. <i>Language Resources and Evaluation</i> 46(4), 523–541.</span> <a href="https://www.cs.toronto.edu/~complingweb/data/TORGO/torgo.html" rel="noopener">TORGO database</a><span class="u">The corpus every result on this page is measured on.</span></li>
+      <li><span class="t">Hui, M., Zhang, J. &amp; Mohan, A. (2024). Enhancing AAC Software for Dysarthric Speakers in e-Health Settings: An Evaluation Using TORGO.</span> <a href="https://arxiv.org/abs/2411.00980" rel="noopener">arXiv:2411.00980</a><span class="u">Sets out how much TORGO's prompts overlap between speakers. It is the reason I test only on held-out sentences.</span></li>
+      <li><span class="t">Shor, J. et al. (2019). Personalizing ASR for Dysarthric and Accented Speech with Limited Data. Interspeech 2019.</span> <a href="https://arxiv.org/abs/1907.13511" rel="noopener">arXiv:1907.13511</a><span class="u">Personalising a recogniser with a small amount of one speaker's recordings: the idea this project rests on.</span></li>
+    </ul>
+
+    <details class="fold lone">
+      <summary><span class="t">Eight more sources</span></summary>
+      <div class="fold-body">
+        <ul class="refs">
+          <li><span class="t">Green, J. R. et al. (2021). Automatic Speech Recognition of Disordered Speech: Personalized Models Outperforming Human Listeners on Short Phrases. Interspeech 2021.</span><span class="u">Personalised models for disordered speech on short phrases.</span></li>
+          <li><span class="t">Speech Accessibility Project Challenge, Interspeech 2025.</span> <a href="https://arxiv.org/abs/2507.22047" rel="noopener">arXiv:2507.22047</a><span class="u">How the strongest current systems are built.</span></li>
+          <li><span class="t">Personalised models for severe speakers by amount of data.</span> <a href="https://arxiv.org/abs/2110.04612" rel="noopener">arXiv:2110.04612</a><span class="u">How results grow with the amount of a speaker's own data.</span></li>
+          <li><span class="t">Whisper-medium fine-tuned on Speech Accessibility Project data, tested on TORGO.</span> <a href="https://arxiv.org/abs/2501.14994" rel="noopener">arXiv:2501.14994</a><span class="u">A published point of comparison on TORGO.</span></li>
+          <li><span class="t">Commercial speech recognition and multimodal language models on severe dysarthric speech.</span> <a href="https://arxiv.org/abs/2512.17474" rel="noopener">arXiv:2512.17474</a><span class="u">How off-the-shelf systems do on severe speech.</span></li>
+          <li><span class="t">Disordered speech added to the pretraining of Google's USM.</span> <a href="https://arxiv.org/abs/2412.19315" rel="noopener">arXiv:2412.19315</a><span class="u">On improving the base model itself with disordered speech.</span></li>
+          <li><span class="t">Zero-shot voice cloning of TORGO speakers for training data.</span> <a href="https://arxiv.org/abs/2508.05102" rel="noopener">arXiv:2508.05102</a><span class="u">On using cloned speech as training data for severe speakers.</span></li>
+          <li><span class="t">Speech Accessibility Project, University of Illinois.</span> <a href="https://speechaccessibilityproject.beckman.illinois.edu/" rel="noopener">Data access</a><span class="u">A much larger collection of disordered speech, available under a data use agreement.</span></li>
+        </ul>
+      </div>
+    </details>
+    <details class="fold lone">
+      <summary><span class="t">Models and software</span></summary>
+      <div class="fold-body">
+        <ul class="refs">
+          <li><span class="t">NVIDIA. Parakeet-TDT-0.6B-v2, speech recognition model.</span> <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v2" rel="noopener">Model page</a></li>
+          <li><span class="t">Qwen team. Qwen2.5-0.5B, language model.</span> <a href="https://huggingface.co/Qwen/Qwen2.5-0.5B" rel="noopener">Model page</a></li>
+          <li><span class="t">NVIDIA NeMo, the toolkit the model is trained with.</span> <a href="https://github.com/NVIDIA/NeMo" rel="noopener">Repository</a></li>
+          <li><span class="t">sherpa-onnx, the runtime that runs the model on the Pi.</span> <a href="https://github.com/k2-fsa/sherpa-onnx" rel="noopener">Repository</a></li>
+          <li><span class="t">three.js, which draws the 3D model on this page.</span> <a href="https://threejs.org/" rel="noopener">threejs.org</a></li>
+        </ul>
+      </div>
+    </details>
+
+    <p class="note"><b>Tool use:</b> Claude (Anthropic), sourcing research from eastern countries, general assistant and tutor.</p>
+
+    <a class="next" href="#code"><span>Next</span><b>05 / The code</b><i aria-hidden="true"></i></a>
+  </div>
+</section>
+
+<!-- =================================================================== code -->
+<section id="code">
+  <div class="wrap">
+    <div class="sect-head"><span class="n">05</span><h2>The code</h2></div>
+    <p class="intro">The application, the training and evaluation scripts and their tests are in the repository beside this page. Recordings, model weights and run logs are left out.</p>
+    <div class="actions">
+      <a class="btn solid" href="https://github.com/RedNetty/willspeak/tree/main/code" rel="noopener">Browse the code on GitHub</a>
+      <a class="btn" href="https://github.com/RedNetty/willspeak" rel="noopener">Repository</a>
+    </div>
+    <p class="label gap">Where to start reading</p>
+    <ul class="cards">
+      <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/asr/train.py" rel="noopener"><code>scripts/asr/train.py</code><span>Fine-tunes Parakeet from the train and development splits. It never opens the test split.</span></a></li>
+      <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/asr/block_adapter.py" rel="noopener"><code>scripts/asr/block_adapter.py</code><span>The adapter: one added layer after an encoder block.</span></a></li>
+      <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/corpus/torgo_manifest.py" rel="noopener"><code>scripts/corpus/torgo_manifest.py</code><span>Scans TORGO and writes the prompt-disjoint splits.</span></a></li>
+    </ul>
+    <details class="fold lone">
+      <summary><span class="t">Six more files</span></summary>
+      <div class="fold-body">
+        <ul class="cards">
+          <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/asr/lm_rescore.py" rel="noopener"><code>scripts/asr/lm_rescore.py</code><span>Chooses among a clip's candidate sentences with the language model.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/asr/ci.py" rel="noopener"><code>scripts/asr/ci.py</code><span>Paired bootstrap intervals for the word error rates.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/scripts/asr/export.py" rel="noopener"><code>scripts/asr/export.py</code><span>Exports a trained model to the files the Pi runs.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/src/willspeak/handsfree.py" rel="noopener"><code>src/willspeak/handsfree.py</code><span>The hands-free rules: speak, stop, sleep and wake.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/blob/main/code/src/willspeak/server.py" rel="noopener"><code>src/willspeak/server.py</code><span>The server that records, transcribes and replies on the device.</span></a></li>
+          <li><a href="https://github.com/RedNetty/willspeak/tree/main/code/tests" rel="noopener"><code>tests/</code><span>Unit and integration tests for the code above.</span></a></li>
+        </ul>
+      </div>
+    </details>
+
+    <a class="next up" href="#top"><span>Back to</span><b>The top</b><i aria-hidden="true"></i></a>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>WillSpeak · Jackson Coon · ENGR 1113, Introduction to Engineering · Lipscomb University · Fall 2026</p>
+    <p>Thanks to Dr. Juan Rojas, ENGR 1113 professor.</p>
+    <p>Site design: Claude (Anthropic).</p>
+  </div>
+</footer>
+
+<script type="module" src="assets/site.js"></script>
+</body>
+</html>
