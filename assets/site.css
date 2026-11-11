@@ -251,7 +251,6 @@ td.num, th.num { text-align: right; padding-right: 0; padding-left: 10px; font-f
 .two { display: grid; gap: 28px; grid-template-columns: 1fr; }
 .two figure { margin: 0; }
 .photo { width: 100%; border: 2px solid var(--ink); border-radius: 16px; }
-.photo.dots { aspect-ratio: 3 / 2; image-rendering: pixelated; }
 
 /* ------------------------------------------------------- the build, in 3D */
 /* the model stays on screen while the steps scroll past it */
