@@ -78,7 +78,7 @@
 <section id="results">
   <div class="wrap">
     <div class="sect-head"><span class="n">01</span><h2>Results from my lab runs</h2></div>
-    <p class="intro">Seven findings, from the starting point to the device. Every number is from a run I recorded on TORGO, a public corpus of dysarthric speech, and the models are tested only on sentences kept out of their training. Open a finding to see its chart.</p>
+    <p class="intro">Eight findings, from the starting point to the device. Every number is from a run I recorded on TORGO, a public corpus of dysarthric speech, and each model is tested only on sentences its own speaker never trained on. For the 166 final test clips, no speaker in training read those sentences. For the other 347 clips, the pretrained base had heard other speakers read some of the same sentences (at least 259 clips), so read the 513-clip numbers with that in mind. Open a finding to see its chart.</p>
 
     <ul class="key" aria-label="How to read the bars">
       <li><i class="base"></i>Stock model, the starting point</li>
@@ -141,6 +141,32 @@
           <tr><td>Adapted + language model</td><td class="num">38</td><td class="num">120</td><td class="num">31.7%</td></tr></tbody></table>
         </details>
         <p class="src">Lab test 36, November 2026. TORGO speakers M01, M02 and M04.</p>
+      </figure>
+        </div>
+      </details></li>
+      <li><details class="fold">
+        <summary><span class="t">On the Pi itself: 76.0% of words wrong falls to 40.9%, and to 39.1% with the language model</span></summary>
+        <div class="fold-body">
+      <figure class="chart" aria-labelledby="c7">
+        <h3 id="c7">Word error rate on the Raspberry Pi 5</h3>
+        <p class="sub">Wrong words out of 425, over the 166 final test clips. Lower is better.</p>
+        <div class="plot" style="--max: 80">
+          <div class="rows">
+            <div class="grid" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="row" tabindex="0"><span class="name">Stock model (lab)</span><span class="track"><span class="bar-fill base" style="--v: 76.0"></span><span class="val" style="--v: 76.0">76.0%</span></span><span class="tip" role="tooltip">323 of 425 words wrong.</span></div>
+            <div class="row" tabindex="0"><span class="name">Adapted, on the Pi</span><span class="track"><span class="bar-fill" style="--v: 40.9"></span><span class="val" style="--v: 40.9">40.9%</span></span><span class="tip" role="tooltip">174 of 425 words wrong. The 8-bit speaker models, decoded on the Pi.</span></div>
+            <div class="row" tabindex="0"><span class="name">Adapted + language model, on the Pi</span><span class="track"><span class="bar-fill" style="--v: 39.1"></span><span class="val" style="--v: 39.1">39.1%</span></span><span class="tip" role="tooltip">166 of 425 words wrong. Qwen2.5-0.5B chooses among three decodes of each sentence.</span></div>
+          </div>
+          <div class="axis" aria-hidden="true"><span>0</span><span>20</span><span>40</span><span>60</span><span>80%</span></div>
+        </div>
+        <p class="cap">The whole pipeline ran on the Pi. The language model re-checks sentences only: it decodes two faster copies of the clip and picks among the answers. Sentences with every word right go from 8 to 9 of 44, and wrong words inside sentences from 88 to 80 of 303. It adds a median of 2.2 s to a sentence (1.6 s for the extra decodes, 0.7 s for the language model); the plain decode takes a median of 0.38 s a clip. Single words skip it.</p>
+        <details><summary>The numbers</summary>
+          <table><thead><tr><th>Model</th><th class="num">Wrong</th><th class="num">Of</th><th class="num">Share</th></tr></thead>
+          <tbody><tr><td>Stock model (lab)</td><td class="num">323</td><td class="num">425</td><td class="num">76.0%</td></tr>
+          <tr><td>Adapted, on the Pi</td><td class="num">174</td><td class="num">425</td><td class="num">40.9%</td></tr>
+          <tr><td>Adapted + language model, on the Pi</td><td class="num">166</td><td class="num">425</td><td class="num">39.1%</td></tr></tbody></table>
+        </details>
+        <p class="src">F-4 and lab test 40 on the Pi, 12 November 2026; the language-model run repeated 15 November with the same counts. TORGO speakers M01, M02 and M04. 44 sentences are few, so the sentence count settles little.</p>
       </figure>
         </div>
       </details></li>
@@ -224,7 +250,7 @@
           </div>
           <div class="axis" aria-hidden="true"><span>0</span><span>1.0</span><span>2.0 s</span></div>
         </div>
-        <p class="cap">The mini-PC was too slow, so the device moved to a Raspberry Pi 5, which is 3.9 times faster at two threads. These timings are the stock 8-bit model on an idle Pi.</p>
+        <p class="cap">The mini-PC was too slow, so the device moved to a Raspberry Pi 5, which is 3.9 times faster at two threads. These timings are the stock 8-bit model on an idle Pi in September, for the decode alone. The adapted models and the language model were timed on the Pi in November; see the finding above.</p>
         <details><summary>The numbers</summary>
           <table><thead><tr><th>Computer</th><th class="num">Seconds</th><th class="num">Share of real time</th></tr></thead>
           <tbody><tr><td>Mini-PC</td><td class="num">1.535</td><td class="num">0.51</td></tr>
@@ -349,7 +375,7 @@
         <p>Turn the sound into words.</p>
         <ul>
           <li><b>Speech recognition</b><span>8-bit Parakeet-TDT 0.6B on the Pi 5</span></li>
-          <li><b>Language model</b><span>Qwen2.5-0.5B picks the best fit</span></li>
+          <li><b>Language model</b><span>Qwen2.5-0.5B re-checks sentences. It runs on the Pi's Compare page; the live microphone path does not use it yet</span></li>
         </ul>
       </li>
       <li>
